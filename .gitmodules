@@ -1,0 +1,3 @@
+[submodule "aare"]
+	path = aare
+	url = https://github.com/slsdetectorgroup/aare.git
