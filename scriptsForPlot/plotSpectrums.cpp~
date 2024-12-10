@@ -1,0 +1,30 @@
+int plotSpectrums(){
+  TFile *inputFile = new TFile("/home/li_s3/mythen/aare-submodule/build/Output/Spectrum_-40deg_testNoSquare.root");
+
+  TCanvas* c1 = new TCanvas("c1","c1",600,500);
+  gStyle->SetOptStat(0);
+
+  TLegend* legend = new TLegend(0.6, 0.4, 0.8, 0.8);
+  
+  int color = 1;
+  
+  for (TObject* keyAsObj : *inputFile->GetListOfKeys()){
+    auto key = dynamic_cast<TKey*>(keyAsObj);
+    TString EnergyPath = key->GetName();
+    TString Enpoint = EnergyPath(2, 4);
+    std::cout << Enpoint.Atoi() << std::endl;
+    if (Enpoint.Atoi() >= 1900) continue;
+    TH1F* h = (TH1F*)inputFile->Get(EnergyPath+"/h2");
+    h->Scale(1/h->Integral(h->GetXaxis()->FindBin(Enpoint.Atoi()-1000), h->GetXaxis()->FindBin(Enpoint.Atoi()+1000)));
+    h->Draw("same, hist");
+    h->SetLineColor(color);
+    h->SetMaximum(0.2);
+    legend->AddEntry(h, Enpoint+" eV", "l");
+    color++;
+    if (color == 10) color++;
+    //h->Delete();
+  }
+  legend->SetBorderSize(0);
+  legend->Draw("same");
+  return 0;
+}
